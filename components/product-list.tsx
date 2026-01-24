@@ -25,7 +25,7 @@ export default function ProductList({ products }: { products: Product[] }) {
                 {product.name}
               </h4>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                Noodles • Retail
+                {product.categories.name}
               </p>
               <div className="flex items-center gap-2 mt-1">
                 <span className="px-2 py-0.5 rounded text-[10px] font-bold bg-red-100 text-red-600 dark:bg-red-950/40 dark:text-red-400">

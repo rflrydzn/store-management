@@ -16,6 +16,10 @@ export type Product = {
   notes: string;
   created_at: string;
   updated_at: string;
+  categories: {
+    id: string;
+    name: string;
+  };
 };
 
 export type Category = {

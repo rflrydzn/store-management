@@ -5,6 +5,7 @@ import CategoryFilter from "@/components/category-filter";
 import ProductList from "@/components/product-list";
 import SearchFilter from "@/components/search-filter";
 import { Product, Category } from "@/lib/types";
+
 interface InventoryPageProps {
   products: Product[];
   categories: Category[];

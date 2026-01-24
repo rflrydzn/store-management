@@ -4,9 +4,16 @@ import Navigation from "@/components/navigation";
 import InventoryPage from "@/components/inventory-page";
 import { supabase } from "@/lib/supabase/client";
 import { Plus } from "lucide-react";
+import { Product } from "@/lib/types";
 
 export default async function Home() {
-  const { data: products } = await supabase.from("items").select();
+  const { data: products } = await supabase.from("items").select(`
+    *,
+    categories (
+      id,
+      name
+    )
+  `);
   const { data: categories } = await supabase.from("categories").select();
 
   return (
