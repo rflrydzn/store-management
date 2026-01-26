@@ -20,7 +20,7 @@ export default async function Home() {
     <div>
       <Header />
       <main className="max-w-md mx-auto">
-        <InventorySummary />
+        {/* <InventorySummary /> */}
 
         <InventoryPage
           products={products ?? []}

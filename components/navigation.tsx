@@ -1,4 +1,5 @@
 import { LayoutTemplate, UserRound, ReceiptText, Settings } from "lucide-react";
+import Link from "next/link";
 
 export default function Navigation() {
   return (
@@ -11,14 +12,17 @@ export default function Navigation() {
           Home
         </span>
       </div>
-      <div className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500">
+      <Link
+        href="/suppliers"
+        className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500"
+      >
         <span className="material-symbols-outlined">
           <UserRound />
         </span>
         <span className="text-[10px] font-bold uppercase tracking-widest">
           Suppliers
         </span>
-      </div>
+      </Link>
       <div className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500">
         <span className="material-symbols-outlined">
           <ReceiptText />

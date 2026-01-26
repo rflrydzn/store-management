@@ -10,6 +10,16 @@ import {
 } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { Product } from "@/lib/types";
+import { Textarea } from "@/components/ui/textarea";
+import Link from "next/link";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import FloorPlan from "@/components/floor-plan";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 
 export default async function ProductDetails({
   params,
@@ -23,6 +33,14 @@ export default async function ProductDetails({
       `
     *,
     categories (
+      id,
+      name
+    ),
+    suppliers (
+      id,
+      name
+    ),
+    locations!items_location_id_fkey (
       id,
       name
     )
@@ -40,11 +58,14 @@ export default async function ProductDetails({
     <div className="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen">
       <div className="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
         <div className="flex items-center p-4 pb-2 justify-between">
-          <div className="text-gray-800 dark:text-gray-200 flex size-12 shrink-0 items-center cursor-pointer">
+          <Link
+            href="/"
+            className="text-gray-800 dark:text-gray-200 flex size-12 shrink-0 items-center cursor-pointer"
+          >
             <span className="material-symbols-outlined">
               <ChevronLeft />
             </span>
-          </div>
+          </Link>
           <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
             Product Details
           </h2>
@@ -61,7 +82,7 @@ export default async function ProductDetails({
         <div className="@container">
           <div className="px-4 py-3">
             <img
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBof6i2TGH7rQIaKvMLP-xc8kwoMPkQEfqSV1D02bT1cMi2o4abPlb5EnhWN8AWVdR3GEIXG_vDrYYw0cpAPgBwNty3GycQ-yD7Wfvgxk_5mSXv4SfhMuGvml9nygEm9kYN00pR6wjbIt-omMzg177cgGlxzUf-JPonauxSovFddskPO6wmubg_WKBv_iHGZxRdYBPEKac0Hg-R1pI95c3cXZbBAN8pb3clcQ3AA_crqE2_2rtBkiGmBCcTdoXMs3yB3ncB8s5SpoPT"
+              src={product?.image_url}
               alt="Product"
               className="w-full bg-center bg-no-repeat bg-cover flex flex-col justify-end overflow-hidden bg-gray-200 dark:bg-gray-800 rounded-xl min-h-80 shadow-sm"
             />
@@ -112,48 +133,39 @@ export default async function ProductDetails({
             </div>
           </div>
         </div>
-        <div className="px-4 py-2 space-y-3">
-          <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">
-                  <LayoutGrid />
+
+        <Dialog>
+          <DialogTrigger asChild>
+            <div className="px-4 py-2 space-y-3">
+              <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">
+                      <LayoutGrid />
+                    </span>
+                  </div>
+                  <div>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                      Shelf Location
+                    </p>
+                    <p className="text-base font-bold text-gray-900 dark:text-white">
+                      {product?.locations.name}
+                    </p>
+                  </div>
+                </div>
+                <span className="material-symbols-outlined text-gray-400">
+                  <ChevronRight />
                 </span>
               </div>
-              <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                  Shelf Location
-                </p>
-                <p className="text-base font-bold text-gray-900 dark:text-white">
-                  Shelf A1 (Top Row)
-                </p>
-              </div>
             </div>
-            <span className="material-symbols-outlined text-gray-400">
-              <ChevronRight />
-            </span>
-          </div>
-          {/* <div className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                <span className="material-symbols-outlined text-gray-600 dark:text-gray-300">
-                  inventory_2
-                </span>
-              </div>
-              <div>
-                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
-                  Stock Status
-                </p>
-                <p className="text-base font-bold text-gray-900 dark:text-white">
-                  48 Units Available
-                </p>
-              </div>
-            </div>
-            <div className="px-2 py-1 bg-primary/20 text-primary text-[10px] font-bold rounded">
-              OPTIMAL
-            </div>
-          </div> */}
-        </div>
+          </DialogTrigger>
+          <DialogContent>
+            <VisuallyHidden>
+              <DialogTitle>Location</DialogTitle>
+            </VisuallyHidden>
+            <FloorPlan section={product?.locations.name ?? ""} />
+          </DialogContent>
+        </Dialog>
         <div className="px-4 py-4">
           <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
             Supplier Information
@@ -167,7 +179,7 @@ export default async function ProductDetails({
               </div>
               <div>
                 <h4 className="font-bold text-gray-900 dark:text-white leading-none">
-                  Liza's Wholesale
+                  {product?.suppliers?.name ?? "Supplier Not Provided"}
                 </h4>
                 <p className="text-xs text-gray-500 mt-1">Main Distributor</p>
               </div>
@@ -186,6 +198,14 @@ export default async function ProductDetails({
             </div>
           </div>
         </div>
+        <div className="px-4 py-4">
+          <h3 className="text-sm font-bold text-gray-900 dark:text-white mb-3">
+            Notes
+          </h3>
+          <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 flex items-center justify-between">
+            <Textarea value={product?.notes} disabled />
+          </div>
+        </div>
         <div className="px-4 py-6">
           <div className="bg-white p-6 rounded-2xl border-2 border-dashed border-gray-200 flex flex-col items-center gap-4">
             <p className="text-xs font-bold text-gray-400 uppercase tracking-[0.2em]">
@@ -196,7 +216,7 @@ export default async function ProductDetails({
               data-alt="Vertical black and white barcode stripes for scanning"
             ></div>
             <p className="font-mono text-lg text-gray-800 tracking-[0.3em]">
-              4801234567890
+              {product?.barcode}
             </p>
           </div>
         </div>
