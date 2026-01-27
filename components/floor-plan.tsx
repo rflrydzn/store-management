@@ -4,8 +4,9 @@ import React, { useState } from "react";
 
 interface FloorPlanProps {
   className?: string;
-  section: string;
+  section?: string | null;
   edit?: boolean;
+  onChange?: (locationId: string) => void;
 }
 
 type Section =
@@ -29,30 +30,53 @@ type Section =
   | "COUNTER"
   | "BUCKET";
 
+const locations = [
+  { id: "9d33141d-8baf-4a3e-8aea-77ecdaa47c7f", name: "BL1" },
+  { id: "844e3b4d-d6f6-4195-b125-855a89e89ea9", name: "BL2" },
+  { id: "1a0466a7-beb3-4d25-ba23-51b2836536ba", name: "BL3" },
+  { id: "4eefb9d4-63e1-408a-b6f6-a01e05e97919", name: "BL4" },
+  { id: "8aa4cebf-0105-49aa-bc1f-d3cc64579781", name: "REF2" },
+  { id: "c8f113d3-1a53-49b7-b990-b64224253581", name: "DOOR" },
+  { id: "f4f3ef09-517a-4ab9-bbb7-77cab855b985", name: "METAL" },
+  { id: "8895e450-f9c4-4366-b999-b247f3d3ef30", name: "REF1" },
+  { id: "f350f96a-973d-4f51-95e8-0ff9adb45277", name: "W1" },
+  { id: "ef7f71fa-45f7-4a47-b6b0-a20401daeda4", name: "W2" },
+  { id: "97d97673-9be2-4e17-a4bc-5e2be65d4de3", name: "W3" },
+  { id: "53421a9b-656f-4882-a18a-3d0ed45c26d3", name: "BUCKET" },
+  { id: "82016364-0a7a-4426-85a6-c8d963078cc7", name: "TABLE" },
+  { id: "452898d8-fafd-4e87-b0ce-d549fe491bbe", name: "RICE" },
+  { id: "dcf9bed2-b3c3-4745-8392-b80594af33ff", name: "COUNTER" },
+  { id: "a67c2fb5-40ef-4166-85a7-5a5f4a5c9de5", name: "SHELF" },
+  { id: "275f8e4f-e89c-4792-88c9-1c5004193a0e", name: "BR1" },
+  { id: "d9555afb-f60b-485e-a681-6185ee1af03c", name: "BR2" },
+];
+
 const FloorPlan: React.FC<FloorPlanProps> = ({
   className = "",
   section,
   edit = false,
+  onChange,
 }) => {
-  const [selectedSections, setSelectedSections] = useState<Set<Section>>(
-    section ? new Set([section as Section]) : new Set(),
+  const [selectedSection, setSelectedSection] = useState<string | null>(
+    section ?? null,
   );
 
   const toggleSection = (section: Section) => {
     if (!edit) return;
 
-    setSelectedSections((prev) => {
-      const newSet = new Set(prev);
-      if (newSet.has(section)) {
-        newSet.delete(section);
-      } else {
-        newSet.add(section);
-      }
-      return newSet;
-    });
+    const location = locations.find((l) => l.name === section);
+    if (!location) return;
+
+    const nextId = selectedSection === location.id ? "" : location.id;
+
+    setSelectedSection(nextId); // update local state first
+    onChange?.(nextId); // then notify parent
   };
 
-  const isSelected = (section: Section) => selectedSections.has(section);
+  const isSelected = (section: Section) => {
+    const location = locations.find((l) => l.name === section);
+    return location ? selectedSection === location.id : false;
+  };
 
   const getSectionClass = (section: Section) => {
     return isSelected(section)
