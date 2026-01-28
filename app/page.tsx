@@ -6,6 +6,8 @@ import { supabase } from "@/lib/supabase/client";
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
+export const revalidate = 5;
+
 export default async function Home() {
   const { data: products } = await supabase.from("items").select(`
     *,
