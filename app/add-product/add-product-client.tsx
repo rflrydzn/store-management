@@ -36,7 +36,7 @@ export default function AddProductClient({
     selling_price: 0,
     supplier_id: "",
     location_id: "",
-    image_url: "",
+    image_url: null,
     notes: "",
   };
 

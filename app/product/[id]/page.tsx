@@ -54,6 +54,7 @@ export default async function ProductDetails({
   const profit = sellingPrice - costPrice;
   const margin = (profit / sellingPrice) * 100;
 
+  console.log("product", product?.locations.name);
   return (
     <div className="bg-background-light dark:bg-background-dark font-display text-gray-900 dark:text-gray-100 min-h-screen">
       <div className="sticky top-0 z-50 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
@@ -163,7 +164,7 @@ export default async function ProductDetails({
             <VisuallyHidden>
               <DialogTitle>Location</DialogTitle>
             </VisuallyHidden>
-            <FloorPlan section={product?.locations.name ?? ""} />
+            <FloorPlan section={product?.locations.id ?? ""} />
           </DialogContent>
         </Dialog>
         <div className="px-4 py-4">

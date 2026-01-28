@@ -10,7 +10,7 @@ export type ProductInput = {
   selling_price: number;
   supplier_id?: string;
   location_id: string;
-  image_url: string;
+  image_url: string | null;
   notes?: string;
 };
 
