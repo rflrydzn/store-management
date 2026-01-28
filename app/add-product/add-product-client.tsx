@@ -14,11 +14,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ProductInput, addProduct } from "@/lib/addProduct";
 import { Category, Supplier } from "@/lib/types";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import FloorPlan from "@/components/floor-plan";
+import { uploadImageAndGetUrl } from "@/lib/uploadImageAndGetUrl";
 
 export default function AddProductClient({
   categories,
@@ -30,13 +31,13 @@ export default function AddProductClient({
   const initialValues: ProductInput = {
     name: "",
     category_id: "",
-    barcode: 0,
+    barcode: null,
     description: "",
     cost_price: 0,
     selling_price: 0,
     supplier_id: "",
     location_id: "",
-    image_url: null,
+    image_url: "",
     notes: "",
   };
 
@@ -44,6 +45,10 @@ export default function AddProductClient({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedLocationName, setSelectedLocationName] = useState<string>("");
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Calculate profit and margin
   const profit = newProduct.selling_price - newProduct.cost_price;
@@ -87,6 +92,41 @@ export default function AddProductClient({
     }
   };
 
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (!file.type.startsWith("image/")) {
+        alert("Please select an image file");
+        return;
+      }
+
+      // Validate file size (5MB max)
+      if (file.size > 5 * 1024 * 1024) {
+        alert("Image size must be less than 5MB");
+        return;
+      }
+
+      setImageFile(file);
+
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setImageFile(null);
+    setImagePreview("");
+    setNewProduct((prev) => ({ ...prev, image_url: "" }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   const handleSubmit = async (saveAndAddAnother: boolean = false) => {
     // Validation
     if (!newProduct.name.trim()) {
@@ -112,7 +152,26 @@ export default function AddProductClient({
 
     try {
       setIsSubmitting(true);
-      await addProduct(newProduct);
+
+      // Upload image if selected
+      let imageUrl = newProduct.image_url;
+      if (imageFile) {
+        try {
+          setIsUploadingImage(true);
+          imageUrl = await uploadImageAndGetUrl(imageFile);
+          setNewProduct((prev) => ({ ...prev, image_url: imageUrl }));
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          alert(
+            "Failed to upload image. The product will be saved without an image.",
+          );
+        } finally {
+          setIsUploadingImage(false);
+        }
+      }
+
+      // Add product with image URL
+      await addProduct({ ...newProduct, image_url: imageUrl });
 
       alert("Product added successfully!");
 
@@ -124,10 +183,20 @@ export default function AddProductClient({
           supplier_id: newProduct.supplier_id,
         });
         setSelectedLocationName("");
+        setImageFile(null);
+        setImagePreview("");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
       } else {
         // Reset everything
         setNewProduct(initialValues);
         setSelectedLocationName("");
+        setImageFile(null);
+        setImagePreview("");
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
         // You might want to navigate away here
         // router.push('/products');
       }
@@ -142,6 +211,11 @@ export default function AddProductClient({
   const handleCancel = () => {
     setNewProduct(initialValues);
     setSelectedLocationName("");
+    setImageFile(null);
+    setImagePreview("");
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
     // You might want to navigate away here
     // router.back();
   };
@@ -292,14 +366,49 @@ export default function AddProductClient({
               <label className="text-sm font-medium text-slate-600 dark:text-slate-400 ml-1">
                 Product Image
               </label>
-              <button className="relative w-full aspect-square bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-transform active:scale-95">
-                <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                  <ImageUp className="text-primary w-5 h-5" />
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageSelect}
+                style={{ display: "none" }}
+              />
+              {imagePreview ? (
+                <div className="relative w-full aspect-square bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-800 rounded-2xl overflow-hidden">
+                  <img
+                    src={imagePreview}
+                    alt="Product preview"
+                    className="w-full h-full object-cover"
+                  />
+                  <button
+                    onClick={handleRemoveImage}
+                    className="absolute top-2 right-2 w-8 h-8 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center transition-colors"
+                    type="button"
+                  >
+                    <span className="text-white text-xl font-bold">×</span>
+                  </button>
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute bottom-2 right-2 px-3 py-1.5 bg-white/90 hover:bg-white rounded-lg text-xs font-semibold text-slate-700 transition-colors"
+                    type="button"
+                  >
+                    Change
+                  </button>
                 </div>
-                <span className="text-xs font-semibold text-slate-500">
-                  Upload Photo
-                </span>
-              </button>
+              ) : (
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  type="button"
+                  className="relative w-full aspect-square bg-white dark:bg-slate-900 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col items-center justify-center gap-2 cursor-pointer transition-transform active:scale-95 hover:border-primary/50"
+                >
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                    <ImageUp className="text-primary w-5 h-5" />
+                  </div>
+                  <span className="text-xs font-semibold text-slate-500">
+                    Upload Photo
+                  </span>
+                </button>
+              )}
             </div>
 
             {/* Shelf Location */}
@@ -437,21 +546,25 @@ export default function AddProductClient({
       <div className="px-4 py-8 space-y-3">
         <button
           onClick={() => handleSubmit(false)}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploadingImage}
           className="w-full h-12 rounded-xl bg-primary text-white font-bold transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isSubmitting ? "Adding Product..." : "Add Product"}
+          {isUploadingImage
+            ? "Uploading Image..."
+            : isSubmitting
+              ? "Adding Product..."
+              : "Add Product"}
         </button>
         <button
           onClick={() => handleSubmit(true)}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploadingImage}
           className="w-full h-12 rounded-xl border border-primary text-primary font-bold transition-all active:bg-primary/5 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Save &amp; Add Another
         </button>
         <button
           onClick={handleCancel}
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploadingImage}
           className="w-full h-12 rounded-xl bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 font-bold disabled:opacity-50 disabled:cursor-not-allowed"
         >
           Cancel

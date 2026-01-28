@@ -5,7 +5,7 @@ export type ProductInput = {
   name: string;
   description?: string;
   category_id: string;
-  barcode?: number;
+  barcode?: number | null;
   cost_price: number;
   selling_price: number;
   supplier_id?: string;
