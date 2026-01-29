@@ -70,13 +70,16 @@ export default async function ProductDetails({
           <h2 className="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em] flex-1 text-center">
             Product Details
           </h2>
-          <div className="flex w-12 items-center justify-end">
+          <Link
+            href={`/product/${id}/edit`}
+            className="flex w-12 items-center justify-end"
+          >
             <button className="flex max-w-120 cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 bg-transparent text-gray-900 dark:text-white gap-2 text-base font-bold leading-normal tracking-[0.015em] min-w-0 p-0">
               <span className="material-symbols-outlined">
                 <Pencil />
               </span>
             </button>
-          </div>
+          </Link>
         </div>
       </div>
       <main className="max-w-md mx-auto pb-24">
