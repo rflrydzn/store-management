@@ -1,6 +1,7 @@
 import Navigation from "@/components/navigation";
 import {
   ChevronLeft,
+  File,
   LayoutTemplate,
   MapPin,
   Phone,
@@ -135,14 +136,17 @@ export default async function SuppliersPage() {
             Suppliers
           </span>
         </div>
-        <div className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500">
+        <Link
+          href="/data-management"
+          className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500"
+        >
           <span className="material-symbols-outlined">
-            <ReceiptText />
+            <File />
           </span>
           <span className="text-[10px] font-bold uppercase tracking-widest">
-            Sales
+            Data
           </span>
-        </div>
+        </Link>
         <div className="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500">
           <span className="material-symbols-outlined">
             <Settings />
