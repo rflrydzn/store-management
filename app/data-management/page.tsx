@@ -2,6 +2,7 @@ import ExportButton from "@/components/export-to-excel-button";
 import { supabase } from "@/lib/supabase/client";
 import React from "react";
 import Link from "next/link";
+import ImportButton from "@/components/import-to-excel";
 
 // interface BackupItem {
 //   id: string;
@@ -141,16 +142,7 @@ const DataManagement: React.FC = async () => {
                   Bulk update your store data by uploading an Excel or CSV file.
                   Ensure you use the provided system template.
                 </p>
-                <button className="flex w-full cursor-pointer items-center justify-center overflow-hidden rounded-lg h-12 px-4 bg-[#135bec] text-white text-sm font-semibold transition-opacity active:opacity-80 hover:bg-[#0d4ac7]">
-                  <svg
-                    className="w-5 h-5 mr-2"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" />
-                  </svg>
-                  <span className="truncate">Upload Excel/CSV File</span>
-                </button>
+                <ImportButton />
               </div>
             </div>
           </div>
