@@ -20,8 +20,8 @@ export default async function SuppliersPage() {
   const { data: suppliers } = await supabase.from("suppliers").select();
 
   return (
-    <main className="bg-background-light dark:bg-background-dark min-h-screen text-[#0d1b12] dark:text-white font-display">
-      <div className="sticky top-0 z-10 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md">
+    <main className="bg-background min-h-screen text-[#0d1b12] dark:text-white font-display">
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-md">
         <div className="flex items-center p-4 pb-2 justify-between">
           <Link
             href="/"
@@ -76,7 +76,7 @@ export default async function SuppliersPage() {
         {suppliers?.map((supplier) => (
           <div
             key={supplier.id}
-            className="flex items-center gap-4 bg-background-light dark:bg-background-dark px-4 min-h-22 py-3 justify-between border-b border-[#e7f3eb] dark:border-[#1a2e20]"
+            className="flex items-center gap-4 bg-background px-4 min-h-22 py-3 justify-between border-b border-[#e7f3eb] dark:border-[#1a2e20]"
           >
             <div className="flex items-center gap-4">
               <img

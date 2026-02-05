@@ -32,7 +32,7 @@ export default function InventoryPage({
 
   return (
     <>
-      <section className="px-4 py-2 sticky top-18 z-40 bg-background-light dark:bg-background-dark">
+      <section className="px-4 py-2 sticky top-18 z-40 bg-background">
         <div className="flex flex-col gap-4">
           <SearchFilter value={search} onChange={setSearch} />
 
