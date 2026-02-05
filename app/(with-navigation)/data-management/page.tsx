@@ -51,7 +51,7 @@ const DataManagement: React.FC = async () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-[#101622] font-sans text-[#0d121b] dark:text-[#f8f9fc] transition-colors duration-200">
       {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-50 flex items-center bg-gray-50 dark:bg-[#101622] p-4 pb-2 justify-between border-b border-gray-200 dark:border-gray-800">
+      <div className="sticky top-0 z-50 flex items-center bg-gray-50 dark:bg-[#101622] p-4 pb-2 justify-between ">
         <Link
           href="/"
           className="text-[#0d121b] dark:text-white flex size-10 shrink-0 items-center justify-center cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"

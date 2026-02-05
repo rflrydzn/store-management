@@ -32,7 +32,7 @@ export default function ImportButton() {
         <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
           <path d="M9 16h6v-6h4l-7-7-7 7h4zm-4 2h14v2H5z" />
         </svg>
-        <span className="truncate">Upload Excel/CSV File</span>
+        <span className="truncate">Upload Excel</span>
       </button>
       <input
         ref={fileRef}

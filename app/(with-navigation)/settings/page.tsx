@@ -143,10 +143,7 @@ export default function SettingsPage() {
                 <div className="flex-1">
                   <p className="text-[15px] font-medium">Dark Mode</p>
                 </div>
-                <label className="ios-toggle">
-                  <input type="checkbox" />
-                  <span className="slider"></span>
-                </label>
+                <ModeToggle />
               </div>
             </div>
           </section>
